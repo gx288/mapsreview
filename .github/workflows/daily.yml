@@ -1,0 +1,28 @@
+name: Check Google Maps Reviews
+
+on:
+  schedule:
+    - cron: '0 1,7,13 * * *'   # 8h sáng, 2h chiều, 8h tối giờ VN (3 lần/ngày)
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run checker
+        env:
+          PLACE_ID: ${{ secrets.PLACE_ID }}
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python main.py
