@@ -7,7 +7,7 @@ from datetime import datetime
 PLACE_ID           = os.environ["PLACE_ID"]
 SERPAPI_KEY        = os.environ["SERPAPI_KEY"]
 TELEGRAM_TOKEN     = os.environ["TELEGRAM_BOT_TOKEN"]
-TELEGRAM_CHAT_ID     = os.environ["TELEGRAM_CHAT_ID"]
+TELEGRAM_CHAT_ID   = os.environ["TELEGRAM_CHAT_ID"]
 
 DATA_FILE = "reviews_data.json"
 
@@ -35,15 +35,14 @@ def get_reviews():
     data = r.json()
     
     results = []
-    for item in data.get("reviews", [])[:50]:  # chỉ lấy 50 mới nhất là đủ
+    for item in data.get("reviews", [])[:50]:
         results.append({
             "review_id": item.get("user_review_id") or f"{item.get('user',{}).get('id','')}_{item.get('date','')}",
-            "author"  : item.get("user", {}).get("name", "Ẩn danh"),
-            "rating"  : item.get("rating"),
-            "text"    : item.get("snippet", ""),
-            "time"    : item.get("date", "Không rõ thời gian")
+            "author"   : item.get("user", {}).get("name", "Ẩn danh"),
+            "rating"   : item.get("rating"),
+            "text"     : item.get("snippet", ""),
+            "time"     : item.get("date", "Không rõ thời gian")
         })
-    )
     return results
 
 def send_telegram(text):
@@ -57,7 +56,7 @@ def send_telegram(text):
     try:
         requests.post(url, data=payload, timeout=10)
     except:
-        pass  # không làm script die nếu Telegram lỗi
+        pass
 
 def main():
     print(f"[{datetime.now()}] Đang kiểm tra đánh giá mới...")
@@ -65,7 +64,7 @@ def main():
     try:
         current_reviews = get_reviews()
     except Exception as e:
-        print("Lỗi lấy dữ liệu từ SerpApi:", e)
+        print("Lỗi SerpApi:", e)
         return
 
     old_reviews = load_old_reviews()
@@ -90,7 +89,7 @@ def main():
             """.strip()
             send_telegram(msg)
 
-        # Lưu lại toàn bộ (giữ tối đa 300 cái gần nhất)
+        # Cập nhật file data
         all_reviews = current_reviews + [r for r in old_reviews if r["review_id"] not in {x["review_id"] for x in current_reviews}]
         save_reviews(all_reviews[:300])
     else:
