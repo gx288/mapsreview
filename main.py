@@ -74,18 +74,18 @@ def get_reviews_from_data_id(data_id):
     url = "https://serpapi.com/search"
     params = {
         "engine": "google_maps_reviews",
-        "data_id": data_id,       # Theo docs: Bắt buộc dùng data_id (không phải place_id)
+        "data_id": data_id,       # Theo docs: Bắt buộc dùng data_id
         "hl": "vi",
         "gl": "vn",
         "sort_by": "newestFirst",
-        "num": 20,
+        # ← BỎ num=20: Theo docs, không dùng trên initial page (sẽ lấy 8 mặc định)
         "api_key": SERPAPI_KEY
     }
     print(f"[{datetime.now()}] Bước 2: Lấy reviews từ Data ID {data_id[:20]}...")
     
     response = requests.get(url, params=params, timeout=30)
     if response.status_code != 200:
-        print(f"Lỗi 400/500 từ reviews API: {response.status_code} - {response.text[:100]}")
+        print(f"Lỗi từ reviews API: {response.status_code} - {response.text[:100]}")
         return []
     
     data = response.json()
@@ -96,7 +96,7 @@ def get_reviews_from_data_id(data_id):
         return []
     
     reviews = data.get("reviews", [])
-    print(f"Tìm thấy {len(reviews)} reviews chi tiết")
+    print(f"Tìm thấy {len(reviews)} reviews chi tiết (8 mặc định theo docs)")
     
     results = []
     for item in reviews:
