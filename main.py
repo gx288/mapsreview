@@ -3,7 +3,7 @@ import json
 import requests
 from datetime import datetime
 
-# Giữ nguyên 4 secrets cũ của bạn
+# Giữ nguyên 4 secrets cũ
 SERPAPI_KEY      = os.environ["SERPAPI_KEY"]
 TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
@@ -28,61 +28,91 @@ def save_reviews(reviews):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(reviews, f, ensure_ascii=False, indent=2)
 
-def get_reviews():
+def get_data_id_from_place():
+    """Bước 1: Lấy data_id từ place_id (engine=google_maps theo docs)"""
     url = "https://serpapi.com/search"
     params = {
-        "engine": "google_maps_reviews",  # Theo docs: Engine chuyên reviews
-        "place_id": PLACE_ID,             # Theo docs: Dùng Place ID (hoặc data_id)
-        "hl": "vi",                       # Theo docs: Ngôn ngữ (vi cho tiếng Việt)
-        "gl": "vn",                       # Theo docs: Localization (Việt Nam)
-        "sort_by": "newestFirst",         # Theo docs: Sắp xếp mới nhất
-        "num": 20,                        # Theo docs: Max 20 results
+        "engine": "google_maps",
+        "type": "place",          # Theo docs: Để lấy chi tiết place
+        "place_id": PLACE_ID,
+        "hl": "vi",
+        "gl": "vn",
         "api_key": SERPAPI_KEY
     }
-    print(f"[{datetime.now()}] Đang gọi SerpApi Reviews API với Place ID: {PLACE_ID[:20]}...")
+    print(f"[{datetime.now()}] Bước 1: Lấy data_id từ Place ID {PLACE_ID[:20]}...")
     
     response = requests.get(url, params=params, timeout=30)
     response.raise_for_status()
     data = response.json()
     
-    # Debug theo docs: Kiểm tra status và place_info (chỉ có ở page đầu)
-    status_info = data.get("search_metadata", {})
-    status = status_info.get("status", "Unknown")
-    print(f"SerpApi status: {status}")
+    status = data.get("search_metadata", {}).get("status", "Unknown")
+    print(f"SerpApi status (place): {status}")
     if status != "Success":
-        error_msg = status_info.get("error", "Unknown error")
-        print(f"Lỗi SerpApi: {error_msg}")
+        print("Lỗi lấy data_id:", data.get("search_metadata", {}).get("error", "Unknown"))
+        return None
+    
+    # Theo docs: data_id ở local_results[0].data_id hoặc place_results.data_id
+    local_results = data.get("local_results", [])
+    if local_results:
+        data_id = local_results[0].get("data_id")
+        title = local_results[0].get("title", "N/A")
+        print(f"Quán từ SerpApi: {title} | Data ID: {data_id}")
+        return data_id
+    
+    place_results = data.get("place_results", {})
+    data_id = place_results.get("data_id")
+    title = place_results.get("title", "N/A")
+    print(f"Quán từ SerpApi: {title} | Data ID: {data_id}")
+    return data_id
+
+def get_reviews_from_data_id(data_id):
+    """Bước 2: Lấy reviews từ data_id (engine=google_maps_reviews theo docs)"""
+    if not data_id:
+        print("Không có data_id – không lấy được reviews chi tiết.")
         return []
     
-    # Theo docs: In place_info để xác nhận (title, rating, reviews count)
-    place_info = data.get("place_info", {})
-    if place_info:
-        title = place_info.get("title", "N/A")
-        rating = place_info.get("rating", "N/A")
-        total_reviews = place_info.get("reviews", "N/A")
-        print(f"Quán: {title} | Rating: {rating} sao ({total_reviews} đánh giá tổng)")
+    url = "https://serpapi.com/search"
+    params = {
+        "engine": "google_maps_reviews",
+        "data_id": data_id,       # Theo docs: Bắt buộc dùng data_id (không phải place_id)
+        "hl": "vi",
+        "gl": "vn",
+        "sort_by": "newestFirst",
+        "num": 20,
+        "api_key": SERPAPI_KEY
+    }
+    print(f"[{datetime.now()}] Bước 2: Lấy reviews từ Data ID {data_id[:20]}...")
+    
+    response = requests.get(url, params=params, timeout=30)
+    if response.status_code != 200:
+        print(f"Lỗi 400/500 từ reviews API: {response.status_code} - {response.text[:100]}")
+        return []
+    
+    data = response.json()
+    status = data.get("search_metadata", {}).get("status", "Unknown")
+    print(f"SerpApi status (reviews): {status}")
+    if status != "Success":
+        print("Lỗi lấy reviews:", data.get("search_metadata", {}).get("error", "Unknown"))
+        return []
     
     reviews = data.get("reviews", [])
-    print(f"Tìm thấy {len(reviews)} reviews chi tiết (theo newestFirst)")
+    print(f"Tìm thấy {len(reviews)} reviews chi tiết")
     
     results = []
     for item in reviews:
-        # Theo docs: Fields chuẩn từ reviews array
         user = item.get("user", {})
         snippet = item.get("snippet", "")
-        # Fallback cho translated snippet theo hl=vi
         if item.get("extracted_snippet", {}).get("translated"):
             snippet = item.get("extracted_snippet", {}).get("translated", snippet)
         
         results.append({
-            "review_id": item.get("review_id"),  # Theo docs: review_id (unique)
-            "author": user.get("name", "Ẩn danh"),  # Theo docs: user.name
-            "rating": item.get("rating"),  # Theo docs: rating (float)
-            "text": snippet,  # Theo docs: snippet hoặc extracted_snippet.translated
-            "time": item.get("date", "Không rõ")  # Theo docs: date (human-readable)
+            "review_id": item.get("review_id"),
+            "author": user.get("name", "Ẩn danh"),
+            "rating": item.get("rating"),
+            "text": snippet,
+            "time": item.get("date", "Không rõ")
         })
     
-    # Sắp xếp mới nhất (dùng date nếu có, fallback time)
     results.sort(key=lambda x: x.get("time", ""), reverse=True)
     return results
 
@@ -106,13 +136,11 @@ def send_to_telegram(message):
 def main():
     print(f"[{datetime.now()}] Bắt đầu kiểm tra đánh giá mới...")
     
-    try:
-        current_reviews = get_reviews()
-        if not current_reviews:
-            print("Không lấy được reviews – kiểm tra Place ID, SerpApi key hoặc quota.")
-            return
-    except Exception as e:
-        print("Lỗi gọi API:", e)
+    data_id = get_data_id_from_place()
+    current_reviews = get_reviews_from_data_id(data_id)
+    
+    if not current_reviews:
+        print("Không lấy được reviews – kiểm tra quota SerpApi hoặc quán chưa có data_id.")
         return
 
     old_reviews = load_old_reviews()
@@ -122,7 +150,7 @@ def main():
 
     if new_reviews:
         print(f"Phát hiện {len(new_reviews)} đánh giá mới!")
-        for rev in new_reviews[:10]:  # Theo docs: num=20, nhưng gửi max 10 để gọn Telegram
+        for rev in new_reviews[:10]:
             stars = "⭐" * int(rev["rating"] or 0)
             msg = f"""
 <b>ĐÁNH GIÁ MỚI – ĐÔNG Y SƠN HÀ</b>
@@ -131,13 +159,12 @@ def main():
 <b>Điểm:</b> {rev['rating']} {stars}
 <b>Thời gian:</b> {rev['time']}
 <b>Nội dung:</b>
-<i>{rev['text'] or '(Chỉ chấm sao, không nội dung)'}</i>
+<i>{rev['text'] or '(Chỉ chấm sao)'}</i>
 
 <a href="https://search.google.com/local/reviews?placeid={PLACE_ID}">Xem trên Maps</a>
             """.strip()
             send_to_telegram(msg)
 
-        # Cập nhật data (giữ 300 cái gần nhất, theo docs không cần pagination cho lần đầu)
         all_reviews = current_reviews + [r for r in old_reviews if r.get("review_id", "") not in {x["review_id"] for x in current_reviews}]
         save_reviews(all_reviews[:300])
         print("→ Đã lưu dữ liệu mới vào reviews_data.json")
