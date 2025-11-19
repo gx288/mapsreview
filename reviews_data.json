@@ -1,58 +1,247 @@
 [
   {
-    "review_id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGMtUkJnEAE",
-    "author": "Quynh Nguyen",
-    "rating": 5.0,
-    "text": "Bs ở đây chữa rất tận tâm,nhân viên phòng khám phục vụ chu đáo",
-    "time": "8 tháng trước"
-  },
-  {
-    "review_id": "ChdDSUhNMG9nS0VJQ0FnTUNRNGMtYWhnRRAB",
-    "author": "SƠN COACH THANH",
-    "rating": 5.0,
-    "text": "nhà mình có người chữa rồi, rất tốt nhé",
-    "time": "8 tháng trước"
-  },
-  {
-    "review_id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGR1elRREAE",
-    "author": "Liên Phạm Thị",
-    "rating": 5.0,
-    "text": "bác sĩ rất nhiệt tình, giỏi nữa, chữa cho được rất nhiều người à. mình đến đây mọi người rất hoan hỉ",
-    "time": "8 tháng trước"
-  },
-  {
-    "review_id": "ChdDSUhNMG9nS0VNTzAySkhKcGZHLWp3RRAB",
-    "author": "Hạnh Đinh",
-    "rating": 1.0,
-    "text": "",
-    "time": "5 tháng trước"
-  },
-  {
-    "review_id": "Ci9DQUlRQUNvZENodHljRjlvT21aQ1owVm9VV2xPUW1wSFFYZ3dOemRvTkROV1NXYxAB",
-    "author": "huong thu",
-    "rating": 5.0,
-    "text": "Hiện tại thấy ok",
-    "time": "4 tháng trước"
-  },
-  {
-    "review_id": "Ci9DQUlRQUNvZENodHljRjlvT214eGFXSXRUV2hxYzAxQ1Z6aFNjWE5VUzJkT1RFRRAB",
-    "author": "Việt phương Nguyễn",
-    "rating": 5.0,
-    "text": "Mình bị sụp mí nặng đi tứ phương để  chữa trị từ Tây y may sao có người quen giới thiệu qua bên đông y Sơn Hà được bác sĩ thăm khám và chữa trị một thời gian  bây giờ đã khỏi hẳn",
-    "time": "4 tháng trước"
-  },
-  {
-    "review_id": "Ci9DQUlRQUNvZENodHljRjlvT25vNGMyRkZRMDlFYkZoYVRrVldYelpWZEVwUFFsRRAB",
+    "id": "Ci9DQUlRQUNvZENodHljRjlvT25vNGMyRkZRMDlFYkZoYVRrVldYelpWZEVwUFFsRRAB",
     "author": "Trần Minh Công",
     "rating": 1.0,
     "text": "Thuốc đắt. Mình theo hết 11tr tiền thuốc mà ko đỡ tí nào.",
     "time": "3 ngày trước"
   },
   {
-    "review_id": "Ci9DQUlRQUNvZENodHljRjlvT20xQ2J6QkJPSEpwV1RWUk1VcE9RVE41Vmw5ZlVuYxAB",
+    "id": "Ci9DQUlRQUNvZENodHljRjlvT20xQ2J6QkJPSEpwV1RWUk1VcE9RVE41Vmw5ZlVuYxAB",
     "author": "Kim Tuyen Nguyen",
     "rating": 5.0,
     "text": "",
     "time": "2 tháng trước"
+  },
+  {
+    "id": "Ci9DQUlRQUNvZENodHljRjlvT21aQ1owVm9VV2xPUW1wSFFYZ3dOemRvTkROV1NXYxAB",
+    "author": "huong thu",
+    "rating": 5.0,
+    "text": "Hiện tại thấy ok",
+    "time": "4 tháng trước"
+  },
+  {
+    "id": "Ci9DQUlRQUNvZENodHljRjlvT214eGFXSXRUV2hxYzAxQ1Z6aFNjWE5VUzJkT1RFRRAB",
+    "author": "Việt phương Nguyễn",
+    "rating": 5.0,
+    "text": "Mình bị sụp mí nặng đi tứ phương để  chữa trị từ Tây y may sao có người quen giới thiệu qua bên đông y Sơn Hà được bác sĩ thăm khám và chữa trị một thời gian  bây giờ đã khỏi hẳn",
+    "time": "4 tháng trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VNTzAySkhKcGZHLWp3RRAB",
+    "author": "Hạnh Đinh",
+    "rating": 1.0,
+    "text": "",
+    "time": "5 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGMtUkJnEAE",
+    "author": "Quynh Nguyen",
+    "rating": 5.0,
+    "text": "Bs ở đây chữa rất tận tâm,nhân viên phòng khám phục vụ chu đáo",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnTUNRNGMtYWhnRRAB",
+    "author": "SƠN COACH THANH",
+    "rating": 5.0,
+    "text": "nhà mình có người chữa rồi, rất tốt nhé",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGR1elRREAE",
+    "author": "Liên Phạm Thị",
+    "rating": 5.0,
+    "text": "bác sĩ rất nhiệt tình, giỏi nữa, chữa cho được rất nhiều người à. mình đến đây mọi người rất hoan hỉ",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTUNRNFl1RFhnEAE",
+    "author": "Tan Tran Van",
+    "rating": 5.0,
+    "text": "Bsi tư vấn rất nhiệt tình",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGVPc1pBEAE",
+    "author": "CamTu Dao",
+    "rating": 5.0,
+    "text": "Mẹ mình chữa lác ở đây khỏi rồi. Đánh giá để  truyền thêm niềm tin,động lực đến mọi người cùng tin tưởng đông y sơn hà như mẹ mình nhé",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTUNRNGYyM05REAE",
+    "author": "Chikien Dao",
+    "rating": 5.0,
+    "text": "Đưa mẹ đến chữa sụp mí tuổi già và giờ mẹ mình đã khỏi",
+    "time": "8 tháng trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnTURBM19mZW9nRRAB",
+    "author": "thang phamduc",
+    "rating": 5.0,
+    "text": "",
+    "time": "9 tháng trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnTURBa0l1cGZREAE",
+    "author": "Huong Pham",
+    "rating": 5.0,
+    "text": "Tôi đã mua 5 triệu tiền thuốc uống mà không có tác dụng gì cả",
+    "time": "9 tháng trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUN2d29QdDlRRRAB",
+    "author": "Đảm Trần",
+    "rating": 5.0,
+    "text": "Yên tâm khi đén",
+    "time": "11 tháng trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUQzdmNhaGxnRRAB",
+    "author": "Quoc Trung Bui",
+    "rating": 5.0,
+    "text": "I used to have a problem about my eyes. One of them couldn't be opened, and I tried asking many doctors in many different places to treat it, but the treatment wasn't successful. However, after about 1 month of treatment at Son Ha Oriental Medicine, it has been opened.",
+    "time": "một năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSURYcVpqZFhBEAE",
+    "author": "Phuc pham cong",
+    "rating": 5.0,
+    "text": "chữa sụp mí mắt bằng Đông y rất tốt",
+    "time": "một năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNMdUxtZ3FnRRAB",
+    "author": "hợi lữ",
+    "rating": 1.0,
+    "text": "",
+    "time": "một năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUQ5eTVhajdnRRAB",
+    "author": "Diep Nguyen",
+    "rating": 5.0,
+    "text": "",
+    "time": "một năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUM1b2JIb2pBRRAB",
+    "author": "Ngọc Yến",
+    "rating": 5.0,
+    "text": "Uy tín",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNaaWVfcDJRRRAB",
+    "author": "Thanh Hoang",
+    "rating": 5.0,
+    "text": "Tôi biết đến phòng khám Đông Y Sơn Hà qua một người bạn giới thiệu, các thầy thuốc ở đây rất nhiệt tình, chu đáo và đặc biệt mang lại một cảm giác gần gũi và ấm áp. Giúp được nhiều người trị sụp mí hiệu quả.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNKcTlpN2hBRRAB",
+    "author": "Phúc thinh Lương",
+    "rating": 5.0,
+    "text": "Mình bị lác mắt uốc thuốc 1tgian là khỏi ạ",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUR4a3A3NDVRRRAB",
+    "author": "Hằng Lê",
+    "rating": 5.0,
+    "text": "mình đã chữa sụp mí ở đây rồi và đã khỏi bác sĩ có chuyên môn và tư vấn rất nhiệt tình.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSUN4aXFfUFpBEAE",
+    "author": "Như Nguyễn",
+    "rating": 1.0,
+    "text": "Mua thuốc hết tổng cộng 15tr về uống rồi nhưng không khỏi được",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNSbGVIVl9RRRAB",
+    "author": "Hương Trần",
+    "rating": 5.0,
+    "text": "Các bác sĩ tận tâm, giúp mẹ mình trị sụp mí tuổi già hồi năm ngoái. Dù ở xa mà các bác vẫn hỗ trợ, theo dõi tỉ mỉ.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSUNSbGVHb0NnEAE",
+    "author": "Hải Yến Nguyễn",
+    "rating": 5.0,
+    "text": "Mình cắt mí hỏng điều trị tại phòng khám đã khỏi hẳn, bình phục. Bác sĩ có tâm, nhiệt tình.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNSbGFHVTNRRRAB",
+    "author": "Khải Đoàn",
+    "rating": 5.0,
+    "text": "Đi chữa mắt lác gần 10 năm không thành công, may gặp được bác sĩ Hà mới chữa khỏi. Bác sĩ mát tay, có tâm. Cảm ơn bác sĩ và phòng khám.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSUNSMFkzbU5nEAE",
+    "author": "Thuong Vi",
+    "rating": 5.0,
+    "text": "Bác sĩ có vườn dược liệu sạch tại Ninh Bình nên yên tâm dùng thuốc",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNSMGFhUDdRRRAB",
+    "author": "Hòa Đinh",
+    "rating": 5.0,
+    "text": "Bác sĩ có chuyên môn cao và rất tận tình, mình sợ đau nên lựa chọn phương pháp không can thiệp phẫu thuật này rất an toàn và hiệu quả",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNSMGV6cXJBRRAB",
+    "author": "Xuân Thanh",
+    "rating": 5.0,
+    "text": "Tận tình, chu đáo, luôn cảm thấy an tâm khi đến địa chỉ này. Cảm ơn lương y Đông Hà rất nhiều!",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSUNSdm9QSkp3EAE",
+    "author": "Minh Nguyen Sy",
+    "rating": 5.0,
+    "text": "Tôi biết đến phòng khám Đông Y Sơn Hà qua một người bạn giới thiệu, các thầy thuốc ở đây rất nhiệt tình, chu đáo và đặc biệt mang lại một cảm giác gần gũi và ấm áp. Đến chữa bệnh mà không hề bị áp lực tâm lý nào. Cảm ơn các bác sỹ và chúc các anh chị luôn mạnh khỏe để giúp được nhiều người hơn nữa",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSURCajViVXJ3RRAB",
+    "author": "Thuy Nguyen",
+    "rating": 5.0,
+    "text": "Dùng thuốc của phòng khám từ 2019 thấy khá ok.",
+    "time": "2 năm trước"
+  },
+  {
+    "id": "ChZDSUhNMG9nS0VJQ0FnSUNPMTZmTWFBEAE",
+    "author": "XUÂN XUÂN",
+    "rating": 5.0,
+    "text": "Tôi đã chữa trị nhiều nơi không khỏi. Sau khi điều trị ở đông y sơn hà 1 tháng mắt đã mở được và đag tiến triển tốt. Tôi rất mừng cảm ơn bác sĩ rất nhiều",
+    "time": "3 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNXeE1IdmhnRRAB",
+    "author": "Y NGA",
+    "rating": 5.0,
+    "text": "mình rất thích phương pháp điều trị an toàn hiệu quả của đông y sơn hà này",
+    "time": "3 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNXeElHM25BRRAB",
+    "author": "Miện Nguyễn Thị",
+    "rating": 5.0,
+    "text": "Tôi biết phòng khám đông y sơn hà vì đã có người quen chữa bệnh  sụp mí mắt ở đây bằng phương pháp không cần phẫu thuật rất an toàn và hiệu quả. Chúc phòng khám ngày càng phát triển để giúp nhiều người",
+    "time": "3 năm trước"
+  },
+  {
+    "id": "ChdDSUhNMG9nS0VJQ0FnSUNXbUlLdXN3RRAB",
+    "author": "Hoa Ha",
+    "rating": 5.0,
+    "text": "Các bác sỹ ở đây rất tận tình chu đáo .cảm ơn phòng khám",
+    "time": "3 năm trước"
   }
 ]
