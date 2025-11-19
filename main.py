@@ -3,19 +3,26 @@ import json
 import requests
 from datetime import datetime
 
-# Lấy từ GitHub Secrets
-PLACE_ID           = os.environ["PLACE_ID"]
-SERPAPI_KEY        = os.environ["SERPAPI_KEY"]
-TELEGRAM_TOKEN     = os.environ["TELEGRAM_BOT_TOKEN"]
-TELEGRAM_CHAT_ID   = os.environ["TELEGRAM_CHAT_ID"]
+# Secrets
+PLACE_ID         = os.environ["PLACE_ID"]
+SERPAPI_KEY      = os.environ["SERPAPI_KEY"]
+TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
+TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
 DATA_FILE = "reviews_data.json"
 
 def load_old_reviews():
-    if os.path.exists(DATA_FILE):
+    if not os.path.exists(DATA_FILE):
+        return []
+    try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+            content = f.read().strip()
+            if not content:
+                return []
+            return json.loads(content)
+    except (json.JSONDecodeError, PermissionError, OSError) as e:
+        print(f"Lỗi đọc file data (sẽ tạo lại): {e}")
+        return []
 
 def save_reviews(reviews):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
@@ -55,20 +62,21 @@ def send_telegram(text):
     }
     try:
         requests.post(url, data=payload, timeout=10)
-    except:
-        pass
+    except Exception as e:
+        print("Lỗi gửi Telegram:", e)
 
 def main():
     print(f"[{datetime.now()}] Đang kiểm tra đánh giá mới...")
     
     try:
         current_reviews = get_reviews()
+        print(f"Lấy được {len(current_reviews)} đánh giá từ Google Maps")
     except Exception as e:
         print("Lỗi SerpApi:", e)
         return
 
     old_reviews = load_old_reviews()
-    old_ids = {r["review_id"] for r in old_reviews}
+    old_ids = {r["review_id"] for r in old_reviews if "review_id" in r}
 
     new_reviews = [r for r in current_reviews if r["review_id"] not in old_ids]
 
@@ -89,7 +97,7 @@ def main():
             """.strip()
             send_telegram(msg)
 
-        # Cập nhật file data
+        # Cập nhật data
         all_reviews = current_reviews + [r for r in old_reviews if r["review_id"] not in {x["review_id"] for x in current_reviews}]
         save_reviews(all_reviews[:300])
     else:
