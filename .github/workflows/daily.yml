@@ -2,7 +2,7 @@ name: Check Google Maps Reviews
 
 on:
   schedule:
-    - cron: '0 1,7,13 * * *'   # 8h, 14h, 20h giờ Việt Nam
+    - cron: '0 1,7,13 * * *'   # 8h – 14h – 20h giờ Việt Nam
   workflow_dispatch:
 
 jobs:
@@ -26,27 +26,21 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python -u main.py
 
-      # Ghi timestamp + tổng reviews vào đầu file json (để repo luôn có commit)
-      - name: Update reviews_data.json with last check time
+      # Bước quan trọng: Ghi timestamp + tự dọn dẹp file keep_alive.txt
+      - name: Update keep_alive.txt (max 1000 dòng)
         run: |
-          if [ ! -f reviews_data.json ]; then
-            echo '[]' > reviews_data.json
-          fi
-          echo "{" > temp.json
-          echo "  \"last_check\": \"$(date '+%Y-%m-%d %H:%M:%S') (GMT+7)\"," >> temp.json
-          echo "  \"total_reviews_stored\": $(jq '. | length' reviews_data.json 2>/dev/null || echo 0)," >> temp.json
-          echo "  \"data\": $(cat reviews_data.json 2>/dev/null || echo '[]')" >> temp.json
-          echo "}" > reviews_data.json
-          mv temp.json reviews_data.json
+          FILE="keep_alive.txt"
+          echo "[$(date '+%Y-%m-%d %H:%M:%S %Z')] Checked – $(jq -r '. | length' reviews_data.json 2>/dev/null || echo 0) reviews stored" >> $FILE
 
-      # Chỉ commit + push nếu có thay đổi (có review mới HOẶC ngày mới)
-      - name: Commit & Push if changed
+          # Giữ lại tối đa 1000 dòng mới nhất
+          tail -n 1000 $FILE > temp.txt
+          mv temp.txt $FILE
+
+      # Commit & push chắc chắn có thay đổi
+      - name: Commit & Push keep_alive.txt
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reviews_data.json
-          git diff --quiet && echo "Không có thay đổi" || (
-            git commit -m "Daily check $(date '+%Y-%m-%d %H:%M') [skip ci]"
-            git push
-            echo "Đã commit & push"
-          )
+          git add keep_alive.txt reviews_data.json
+          git commit -m "Alive check $(date '+%Y-%m-%d %H:%M') [skip ci]" || echo "Nothing new"
+          git push
