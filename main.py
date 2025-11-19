@@ -35,11 +35,23 @@ def get_reviews():
         "type": "place",
         "place_id": PLACE_ID,
         "hl": "vi",
+        "gl": "vn",  # THÊM DÒNG NÀY: Ưu tiên Việt Nam để lấy review địa phương
         "api_key": SERPAPI_KEY
     }
+    print(f"Đang gọi SerpApi với Place ID: {PLACE_ID[:20]}...")  # Debug: in Place ID đầu
     r = requests.get(url, params=params, timeout=30)
     r.raise_for_status()
     data = r.json()
+    
+    # DEBUG: In toàn bộ response để xem có gì
+    print("SerpApi response keys:", list(data.keys()))
+    print("Số lượng reviews:", len(data.get("reviews", [])))
+    if "error" in data:
+        print("Lỗi từ SerpApi:", data["error"])
+    
+    # In tên quán để xác nhận đúng
+    title = data.get("title", "Không có tên")
+    print(f"Tên quán từ SerpApi: {title}")
     
     results = []
     for item in data.get("reviews", [])[:50]:
@@ -100,6 +112,7 @@ def main():
         # Cập nhật data
         all_reviews = current_reviews + [r for r in old_reviews if r["review_id"] not in {x["review_id"] for x in current_reviews}]
         save_reviews(all_reviews[:300])
+        print("Đã lưu dữ liệu mới vào reviews_data.json")
     else:
         print("Không có đánh giá mới.")
 
