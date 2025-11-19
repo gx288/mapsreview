@@ -2,12 +2,13 @@ import os
 import json
 import requests
 from datetime import datetime
+import urllib.parse
 
-# Secrets
-PLACE_ID         = os.environ["PLACE_ID"]
-SERPAPI_KEY      = os.environ["SERPAPI_KEY"]
+# Secrets (thêm GOOGLE_PLACES_KEY mới)
+GOOGLE_PLACES_KEY = os.environ["GOOGLE_PLACES_KEY"]
 TELEGRAM_TOKEN   = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
+PLACE_ID         = os.environ["PLACE_ID"]
 
 DATA_FILE = "reviews_data.json"
 
@@ -21,7 +22,7 @@ def load_old_reviews():
                 return []
             return json.loads(content)
     except (json.JSONDecodeError, PermissionError, OSError) as e:
-        print(f"Lỗi đọc file data (sẽ tạo lại): {e}")
+        print(f"Lỗi đọc file data: {e}")
         return []
 
 def save_reviews(reviews):
@@ -29,39 +30,37 @@ def save_reviews(reviews):
         json.dump(reviews, f, ensure_ascii=False, indent=2)
 
 def get_reviews():
-    url = "https://serpapi.com/search"
+    # Lấy reviews từ Google Places API
+    url = f"https://maps.googleapis.com/maps/api/place/details/json"
     params = {
-        "engine": "google_maps",
-        "type": "place",
         "place_id": PLACE_ID,
-        "hl": "vi",
-        "gl": "vn",  # THÊM DÒNG NÀY: Ưu tiên Việt Nam để lấy review địa phương
-        "api_key": SERPAPI_KEY
+        "fields": "name,rating,reviews,user_ratings_total",  # Lấy reviews + tổng
+        "language": "vi",
+        "key": GOOGLE_PLACES_KEY
     }
-    print(f"Đang gọi SerpApi với Place ID: {PLACE_ID[:20]}...")  # Debug: in Place ID đầu
+    print(f"Đang gọi Google Places API với Place ID: {PLACE_ID[:20]}...")
     r = requests.get(url, params=params, timeout=30)
     r.raise_for_status()
     data = r.json()
     
-    # DEBUG: In toàn bộ response để xem có gì
-    print("SerpApi response keys:", list(data.keys()))
-    print("Số lượng reviews:", len(data.get("reviews", [])))
-    if "error" in data:
-        print("Lỗi từ SerpApi:", data["error"])
-    
-    # In tên quán để xác nhận đúng
-    title = data.get("title", "Không có tên")
-    print(f"Tên quán từ SerpApi: {title}")
+    print("Google API status:", data.get("status"))
+    print("Tên quán:", data.get("result", {}).get("name", "N/A"))
+    print("Rating tổng:", data.get("result", {}).get("rating"), f"({data.get('result', {}).get('user_ratings_total', 0)} đánh giá)")
     
     results = []
-    for item in data.get("reviews", [])[:50]:
+    reviews = data.get("result", {}).get("reviews", [])
+    print(f"Tìm thấy {len(reviews)} reviews chi tiết")
+    
+    for item in reviews[:20]:  # Lấy tối đa 20 (Google giới hạn 5 mặc định, nhưng fields=reviews lấy 5; nếu cần nhiều hơn, dùng pagetoken)
         results.append({
-            "review_id": item.get("user_review_id") or f"{item.get('user',{}).get('id','')}_{item.get('date','')}",
-            "author"   : item.get("user", {}).get("name", "Ẩn danh"),
-            "rating"   : item.get("rating"),
-            "text"     : item.get("snippet", ""),
-            "time"     : item.get("date", "Không rõ thời gian")
+            "review_id": item.get("time", 0),  # Dùng timestamp làm ID
+            "author": item.get("author_name", "Ẩn danh"),
+            "rating": item.get("rating"),
+            "text": item.get("text", ""),
+            "time": item.get("relative_time_description", "Không rõ")  # e.g., "2 tuần trước"
         })
+    
+    results.sort(key=lambda x: x.get("time", ""), reverse=True)
     return results
 
 def send_telegram(text):
@@ -74,17 +73,18 @@ def send_telegram(text):
     }
     try:
         requests.post(url, data=payload, timeout=10)
+        print("Gửi Telegram thành công!")
     except Exception as e:
-        print("Lỗi gửi Telegram:", e)
+        print("Lỗi Telegram:", e)
 
 def main():
-    print(f"[{datetime.now()}] Đang kiểm tra đánh giá mới...")
+    print(f"[{datetime.now()}] Kiểm tra đánh giá mới...")
     
     try:
         current_reviews = get_reviews()
-        print(f"Lấy được {len(current_reviews)} đánh giá từ Google Maps")
+        print(f"Lấy được {len(current_reviews)} đánh giá chi tiết")
     except Exception as e:
-        print("Lỗi SerpApi:", e)
+        print("Lỗi Google API:", e)
         return
 
     old_reviews = load_old_reviews()
@@ -97,22 +97,21 @@ def main():
         for r in new_reviews[:10]:
             stars = "⭐" * int(r["rating"] or 0)
             msg = f"""
-<b>Đánh giá mới trên Google Maps</b>
+<b>Đánh giá mới trên Google Maps!</b>
 
-<b>Người đánh giá:</b> {r['author']}
+<b>Tác giả:</b> {r['author']}
 <b>Điểm:</b> {r['rating']} {stars}
 <b>Thời gian:</b> {r['time']}
-<b>Nội dung:</b>
-<i>{r['text'] or '(Chỉ đánh sao)'}</i>
+<b>Nội dung:</b> <i>{r['text'] or '(Chỉ đánh sao)'}</i>
 
-<a href="https://search.google.com/local/reviews?placeid={PLACE_ID}">Xem trực tiếp</a>
+<a href="https://search.google.com/local/reviews?placeid={PLACE_ID}">Xem trên Maps</a>
             """.strip()
             send_telegram(msg)
 
         # Cập nhật data
         all_reviews = current_reviews + [r for r in old_reviews if r["review_id"] not in {x["review_id"] for x in current_reviews}]
         save_reviews(all_reviews[:300])
-        print("Đã lưu dữ liệu mới vào reviews_data.json")
+        print("Đã lưu dữ liệu mới!")
     else:
         print("Không có đánh giá mới.")
 
