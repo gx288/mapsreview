@@ -21,17 +21,32 @@ jobs:
 
       - name: Run checker
         env:
-          PLACE_ID: ${{ secrets.PLACE_ID }}
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python -u main.py
 
-      # Phần này được sửa để KHÔNG BAO GIỜ lỗi dù file chưa tồn tại
-      - name: Commit & Push reviews_data.json nếu có thay đổi
+      # Ghi timestamp + tổng reviews vào đầu file json (để repo luôn có commit)
+      - name: Update reviews_data.json with last check time
+        run: |
+          if [ ! -f reviews_data.json ]; then
+            echo '[]' > reviews_data.json
+          fi
+          echo "{" > temp.json
+          echo "  \"last_check\": \"$(date '+%Y-%m-%d %H:%M:%S') (GMT+7)\"," >> temp.json
+          echo "  \"total_reviews_stored\": $(jq '. | length' reviews_data.json 2>/dev/null || echo 0)," >> temp.json
+          echo "  \"data\": $(cat reviews_data.json 2>/dev/null || echo '[]')" >> temp.json
+          echo "}" > reviews_data.json
+          mv temp.json reviews_data.json
+
+      # Chỉ commit + push nếu có thay đổi (có review mới HOẶC ngày mới)
+      - name: Commit & Push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reviews_data.json 2>/dev/null || echo "No file to add"
-          git commit -m "Update reviews data [skip ci]" || echo "Nothing to commit"
-          git push || echo "Nothing to push"
+          git add reviews_data.json
+          git diff --quiet && echo "Không có thay đổi" || (
+            git commit -m "Daily check $(date '+%Y-%m-%d %H:%M') [skip ci]"
+            git push
+            echo "Đã commit & push"
+          )
